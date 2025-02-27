@@ -12,5 +12,8 @@
 	"devDependencies": {
 		"typescript": "^5.7.3",
 		"bun-types": "^1.2.4"
+	},
+	"dependencies": {
+		"@cosense/types": "npm:@jsr/cosense__types"
 	}
 }
