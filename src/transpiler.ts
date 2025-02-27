@@ -106,7 +106,9 @@ export function processVariableDeclarations(code: string): string {
 		.split("\n")
 		.map((line) => {
 			if (/^\s*(let|const|var)\b/.test(line)) {
-				return line.replace(/(\b(let|const|var)\s+\S+)\s*:\s*([^=;]+)/, "$1");
+				return line
+					.replace(/(\b(let|const|var)\s+\S+)\s*:\s*([^=;]+)/, "$1")
+					.replace(/(\S)(=)/, "$1 =");
 			}
 			return line;
 		})
