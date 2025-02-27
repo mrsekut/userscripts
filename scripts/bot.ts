@@ -1,3 +1,5 @@
+export {};
+
 // https://scrapbox.io/mrsekut-p/Cosense上のメモに適度に批判してくれるbot
 // @ts-check
 cosense.PageMenu.addMenu({
