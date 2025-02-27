@@ -3,7 +3,6 @@ export {};
 cosense.PageMenu.addMenu({
   title: 'book',
   image: 'https://i.gyazo.com/c24ee728d18f60cdeccf124cfe55eafa.png',
-  onClick: main,
 });
 
 cosense.PageMenu('book').addItem({
