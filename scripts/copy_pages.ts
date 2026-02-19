@@ -58,10 +58,11 @@ async function main() {
 }
 
 function modal() {
+  type OnSubmit = (endPage: string) => Promise<void>;
   const container = $('<div></div>');
   let shown = false;
 
-  function render(onSubmit) {
+  function render(onSubmit: OnSubmit) {
     shown = true;
     const thisPage = cosense.Page.title;
 
@@ -96,9 +97,9 @@ function modal() {
     return shown;
   }
 
-  function setupEventListeners(onSubmit) {
+  function setupEventListeners(onSubmit: OnSubmit) {
     $('#submitButton').on('click', () => {
-      const endPage = $('#endPage').val();
+      const endPage = $('#endPage').val() as string;
       onSubmit(endPage);
     });
 
@@ -152,6 +153,6 @@ async function pageBody(title: string) {
  * @param {number} ms
  * @returns {Promise<void>}
  */
-async function sleep(ms) {
+async function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }

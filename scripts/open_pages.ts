@@ -11,7 +11,7 @@ cosense.PageMenu('book').addItem({
 });
 
 async function main() {
-  const start = cosense.Page.title;
+  const start = cosense.Page.title ?? '';
 
   const generator = pagesContentGenerator(start);
 
