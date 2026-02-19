@@ -13,6 +13,7 @@
     "@cosense/types": "npm:@jsr/cosense__types",
     "@types/jquery": "^3.5.33",
     "bun-types": "^1.2.4",
+    "cosense-userscript-dev": "^0.1.0",
     "prettier": "^3.5.2",
     "typescript": "^5.7.3"
   }

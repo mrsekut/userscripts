@@ -153,6 +153,6 @@ async function pageBody(title: string) {
  * @param {number} ms
  * @returns {Promise<void>}
  */
-async function sleep(ms: number) {
+async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
