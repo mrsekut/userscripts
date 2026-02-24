@@ -74,7 +74,11 @@
       title: 'idea',
       onClick: async text => {
         try {
-          await postTask(text);
+          const projectName = unsafeWindow.scrapbox.Project.name;
+          const pageTitle = unsafeWindow.scrapbox.Page.title;
+          const sourceUrl = `https://scrapbox.io/${projectName}/${pageTitle}`;
+          const textWithSource = `${text}\n元ページ: ${sourceUrl}`;
+          await postTask(textWithSource);
           return buildResultText(text);
         } catch (e) {
           console.error('[prototyping-runner] Failed:', e);
