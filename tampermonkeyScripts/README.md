@@ -1,0 +1,2 @@
+tampermonkey用のscriptのメモ置き場
+手動でtampermonkeyに追加する
