@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Cosense → prototyping-runner
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.4
 // @description  Send selected text to prototyping-runner
 // @match        https://scrapbox.io/*
 // @grant        GM_xmlhttpRequest
@@ -15,44 +15,71 @@
 (function () {
   'use strict';
 
-  console.log('[prototyping-runner] Tampermonkey script loaded');
+  const PORT = 35719;
+  const REPO_BASE =
+    'https://github.com/mrsekut/prototypings/tree/master/projects';
 
-  // Wait for scrapbox API to be ready (check for .editor DOM element like cosense-userscript-dev does)
+  function postTask(text) {
+    return new Promise((resolve, reject) => {
+      GM_xmlhttpRequest({
+        method: 'POST',
+        url: `http://localhost:${PORT}/tasks`,
+        headers: { 'Content-Type': 'application/json' },
+        data: JSON.stringify({ text }),
+        onload: res => {
+          const data = JSON.parse(res.responseText);
+          if (data.ok) {
+            resolve();
+          } else {
+            reject(new Error(data.error || 'Unknown error'));
+          }
+        },
+        onerror: err => {
+          reject(err);
+        },
+      });
+    });
+  }
+
   const waitForReady = setInterval(() => {
     const hasEditor = document.querySelector('.editor');
     const hasScrapbox =
       unsafeWindow.scrapbox && unsafeWindow.scrapbox.PopupMenu;
-    console.log(
-      '[prototyping-runner] waiting... editor:',
-      !!hasEditor,
-      'scrapbox:',
-      !!hasScrapbox,
-    );
     if (hasEditor && hasScrapbox) {
       clearInterval(waitForReady);
       init();
     }
   }, 500);
 
+  function buildResultText(text) {
+    const lines = text.split('\n');
+    const contentIdx = lines.findIndex(l => l.trim() !== '');
+    if (contentIdx === -1) return null;
+
+    const contentLine = lines[contentIdx];
+    const description = contentLine.trim();
+    const protoUrl = `${REPO_BASE}/${encodeURI(description)}`;
+    const indent = contentLine.match(/^(\s*)/)[0] + ' ';
+    const protoLine = `${indent}→ [proto ${protoUrl}]`;
+
+    return [
+      ...lines.slice(0, contentIdx + 1),
+      protoLine,
+      ...lines.slice(contentIdx + 1),
+    ].join('\n');
+  }
+
   function init() {
     unsafeWindow.scrapbox.PopupMenu.addButton({
       title: 'idea',
-      onClick: text => {
-        console.log('[prototyping-runner] onClick called with:', text);
-        GM_xmlhttpRequest({
-          method: 'POST',
-          url: 'http://localhost:35719/tasks', // prototyping-runnerのAPIエンドポイント
-          headers: { 'Content-Type': 'application/json' },
-          data: JSON.stringify({ text }),
-          onload: res => {
-            alert('sent!');
-            console.log('[prototyping-runner] Sent:', res.responseText);
-          },
-          onerror: err => {
-            console.error('[prototyping-runner] Failed:', err);
-          },
-        });
-        return undefined; // don't modify selected text
+      onClick: async text => {
+        try {
+          await postTask(text);
+          return buildResultText(text);
+        } catch (e) {
+          console.error('[prototyping-runner] Failed:', e);
+          return undefined;
+        }
       },
     });
   }
